@@ -1,6 +1,5 @@
 /*
    This file contains all the support routines and convenience functions.
-   You won't need to make any changes to this file for this assignment.
 */
 
 // Define a general purpose 3D vector object.
@@ -36,21 +35,21 @@ function start_gl(canvas_id, vertexShader, fragmentShader) {
 
       try {
          var canvas = document.getElementById(canvas_id);
-         var gl = canvas.getContext("experimental-webgl");
+         window.gl = canvas.getContext("experimental-webgl");
       } catch (e) { throw "Sorry, your browser does not support WebGL."; }
 
       // Catch mouse events that go to the canvas.
 
-      function setMouse(z) {
+      function setMouse(event, z) {
          var r = event.target.getBoundingClientRect();
          gl.cursor.x = (event.clientX - r.left  ) / (r.right - r.left) * 2 - 1;
          gl.cursor.y = (event.clientY - r.bottom) / (r.top - r.bottom) * 2 - 1;
          if (z !== undefined)
 	    gl.cursor.z = z;
       }
-      canvas.onmousedown = function(event) { setMouse(1); } // On mouse down, set z to 1.
-      canvas.onmousemove = function(event) { setMouse() ; }
-      canvas.onmouseup   = function(event) { setMouse(0); } // On mouse up  , set z to 0.
+      canvas.onmousedown = function(event) { setMouse(event, 1); } // On mouse down, set z to 1.
+      canvas.onmousemove = function(event) { setMouse(event)   ; }
+      canvas.onmouseup   = function(event) { setMouse(event, 0); } // On mouse up  , set z to 0.
       gl.cursor = new Vector3();
 
       // Initialize gl. Then start the frame loop.
@@ -68,7 +67,7 @@ function addshader(gl, program, type, src) {
    gl.shaderSource(shader, src);
    gl.compileShader(shader);
    if (! gl.getShaderParameter(shader, gl.COMPILE_STATUS))
-      throw "Cannot compile shader:\n\n" + gl.getShaderInfoLog(shader);
+      console.log("Cannot compile shader:\n\n" + gl.getShaderInfoLog(shader));
    gl.attachShader(program, shader);
 };
 
@@ -79,11 +78,12 @@ function gl_init(gl, vertexShader, fragmentShader) {
    // Create and link the gl program, using the application's vertex and fragment shaders.
 
    var program = gl.createProgram();
+   gl.program = program;
    addshader(gl, program, gl.VERTEX_SHADER  , vertexShader  );
    addshader(gl, program, gl.FRAGMENT_SHADER, fragmentShader);
    gl.linkProgram(program);
    if (! gl.getProgramParameter(program, gl.LINK_STATUS))
-      throw "Could not link the shader program!";
+      console.log("Could not link the shader program!");
    gl.useProgram(program);
 
    // Create a square as a strip of two triangles.
@@ -96,18 +96,32 @@ function gl_init(gl, vertexShader, fragmentShader) {
    gl.aPosition = gl.getAttribLocation(program, "aPosition");
    gl.enableVertexAttribArray(gl.aPosition);
    gl.vertexAttribPointer(gl.aPosition, 3, gl.FLOAT, false, 0, 0);
-
-   // Remember the address within the fragment shader of each of my uniform variables.
-
-   gl.uTime   = gl.getUniformLocation(program, "uTime"  );
-   gl.uCursor = gl.getUniformLocation(program, "uCursor");
 }
 
-// Update is called once per animation frame.
+// Return the location in GPU memory of a uniform variable having the given name.
+
+function uVar(name) {
+   return gl.getUniformLocation(gl.program, name);
+}
+
+// gl_update() is called once per animation frame.
 
 function gl_update(gl) {
-   gl.uniform1f(gl.uTime  , (new Date()).getTime() / 1000 - time0); // Set time uniform variable.
-   gl.uniform3f(gl.uCursor, gl.cursor.x, gl.cursor.y, gl.cursor.z); // Set cursor uniform variable.
+
+   // Set a global variable counting how many seconds since the page was loaded.
+
+   time = (new Date()).getTime() / 1000 - startTime;
+
+   // If the application programmer has
+
+   if (window.update)
+      update();
+
+   // Set values for some convenient uniform variables.
+
+   gl.uniform3f (uVar('uCursor'), gl.cursor.x, gl.cursor.y, gl.cursor.z); // Set cursor uniform variable.
+   gl.uniform1f (uVar('uTime'), time);                                  // Set time uniform variable.
+
    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);                          // Render the square.
    requestAnimFrame(function() { gl_update(gl); });                 // Start the next frame.
 }
@@ -122,5 +136,6 @@ requestAnimFrame = (function(callback) {
           || msRequestAnimationFrame
           || function(callback) { setTimeout(callback, 1000 / 60); }; })();
 
-var time0 = (new Date()).getTime() / 1000;                          // Record the start time.
+var startTime = (new Date()).getTime() / 1000;                          // Record the start time.
+var time = 0;
 

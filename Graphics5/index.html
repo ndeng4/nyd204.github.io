@@ -1,0 +1,159 @@
+
+
+<!! THIS IS AN EXAMPLE OF A HOMEWORK DOCUMENT THAT CONTAINS CANVAS BASED GRAPHICS.
+    YOU SHOULD PROBABLY CHANGE THE TEXT TO SOMETHING THAT DESCRIBES YOUR OWN WORK.>
+
+
+<center>
+<table>
+<tr>
+<td>
+<center>
+<canvas id=canvas1 width=400 height=400></canvas>
+<p>
+<i>Draw rectangles by clicking and dragging!</i>
+</center>
+</td>
+<td width=50></td>
+<td>
+<center>
+<canvas id=canvas2 width=400 height=400></canvas>
+<p>
+<i>Watch the day/night cycle!</i>
+</center>
+</td>
+</tr>
+</table>
+<p>
+</center>
+<p>
+
+
+<script src=drawlib1.js></script>
+
+<!! BELOW IS THE CONTENT WE DEVELOPED IN TUESDAY'S CLASS.>
+
+<script>
+	  var canvas;
+
+	  canvas = initCanvas('canvas1');
+	  start_x = 0;
+	  end_x = 0;
+	  start_y = 0;
+	  end_y = 0;
+	  canvas.update = function(g) {
+		var x = this.cursor.x,
+			y = this.cursor.y;
+
+		g.strokeStyle = 'black';
+		g.lineWidth = 2;
+		g.strokeRect(1, 1, this.width-2, this.height-2);
+		g.fill();
+
+		if (start_x && start_y && end_x && end_y) {
+		  g.strokeStyle = "black";
+		  g.lineCap = "round";
+		  g.beginPath();
+		  g.moveTo(start_x, start_y);
+		  g.rect(start_x, start_y, end_x, end_y);
+		  g.lineWidth = 5;
+		  g.fill();
+		  start_x, start_y, end_x, end_y = 0,0,0,0;
+		}
+	  }
+
+	  canvas.onmousedown = function(g) {
+		start_x = this.cursor.x
+		start_y = this.cursor.y;
+	  }
+
+	  canvas.onmouseup = function(g) {
+		end_x = this.cursor.x;
+		end_y = this.cursor.y;
+	  }
+   canvas = initCanvas('canvas2');
+   canvas.update = function(g) {
+ g.strokeStyle = 'black';
+		g.lineWidth = 2;
+		g.strokeRect(1, 1, this.width-2, this.height-2);
+		
+
+		var t = 2*Math.cos(0.5*time);
+		var sky = "rgba(164,200,235,1)";
+		var grass = "rgba(88,200,68,1)";
+		var star = "rgba(227,182,43,1)";
+		if (t > 0) {
+		   sky = "rgba(29,58,73,1)";
+		   grass = "rgba(54,97,42,1)";
+		   star = "rgba(195,211,216,1)";
+		}
+		g.fillStyle = sky;
+		g.fillRect(1,1,this.width-2,this.height-2);
+
+		var pos = (this.width-4) *.6;
+		g.moveTo(1, pos);
+		g.fillStyle = grass;
+		g.fillRect(1, pos, this.width-2, this.height - 1 - pos);
+
+		g.beginPath();
+		g.arc(280,100*Math.abs(t),30,0,2*Math.PI);
+		g.fillStyle = star;
+		g.closePath();
+		g.fill();
+	  
+	   // Mountains
+       g.fillStyle = 'rgb(130,130,130)';
+      x =  80;
+      g.beginPath();
+      g.moveTo(x, 250);
+      g.lineTo(x+110, 250);
+      g.lineTo(x+55, 120);
+      g.lineTo(x, 250);
+      g.fill();
+      
+      // More Mountains
+      g.fillStyle = 'rgb(190,190,190)';
+      var k = 80;
+      g.beginPath();
+      g.moveTo(0, 250);
+      g.lineTo(150, 250);
+      g.lineTo(75, 160);
+      g.lineTo(0, 250);
+      g.fill();
+      
+      g.fillStyle = 'rgb(105,105,105)';
+      x = k;
+      g.beginPath();
+      g.moveTo(x, 250);
+      g.lineTo(x+90, 250);
+      g.lineTo(x+45, 180);
+      g.lineTo(x, 250);
+      g.fill();
+      
+      x = 2.5*k;
+      g.beginPath();
+      g.moveTo(x, 250);
+      g.lineTo(x+160, 250);
+      g.lineTo(x+80, 140);
+      g.lineTo(x, 250);
+      g.fill();
+      
+      g.fillStyle = 'rgb(190,190,190)';
+      x = 2*k;
+      g.beginPath();
+      g.moveTo(x, 250);
+      g.lineTo(x+100, 250);
+      g.lineTo(x+50, 190);
+      g.lineTo(x, 250);
+      g.fill();
+      
+      x = 3*k;
+      g.beginPath();
+      g.moveTo(x, 250);
+      g.lineTo(x+50, 250);
+      g.lineTo(x+10, 190);
+      g.lineTo(x, 250);
+      g.fill();
+   }
+</script>
+
