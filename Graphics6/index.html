@@ -32,7 +32,11 @@ Here is my next cool homework, and this is my even more excellent example:
 <script src=matrix.js></script>
 
 <script>
-   var canvas;
+  var canvas;
+
+	var xdown, ydown, zdown;
+
+	
 
 
    // BELOW IS THE CODE WE WROTE ON THURSDAY TO TEST THE MATRIX CLASS.
@@ -40,6 +44,8 @@ Here is my next cool homework, and this is my even more excellent example:
    // CREATE AN ANIMATED GRAPHICAL SCENE TO DEMONSTRATE YOUR WORK.
    // YOU SHOULD USE BOTH THE time AND this.cursor VARIABLES.
 
+
+	// Check all matrix functionality
    var matrix = new Matrix();
 
    matrix.identity();
@@ -48,28 +54,325 @@ Here is my next cool homework, and this is my even more excellent example:
 
    console.log(matrix.toString());
 
-   var srcVec = new Vector3(10, 0, 0);
+   var srcVec = new Vector3(10, 10, 10);
    var dstVec = new Vector3(0, 0, 0);
+   console.log(srcVec.toString());
    matrix.transform(srcVec, dstVec);
+   console.log(dstVec.toString());
+   matrix.translateVec(srcVec, dstVec, 2,2,2);
+   console.log(dstVec.toString());
+   
+   matrix.rotateX(srcVec, dstVec, 2);
+   console.log(dstVec.toString());
+   matrix.rotateY(srcVec, dstVec, 2);
+   console.log(dstVec.toString());
+   matrix.rotateZ(srcVec, dstVec, 2);
+   console.log(dstVec.toString());
+   
+   matrix.scale(srcVec, dstVec, 2,2,2);
    console.log(dstVec.toString());
    
    /////////////////////////////////////////////////////////////////////
 
 
+	// Create cubes and pyramids
+	var cube = new Cube(0,0,0, .1);
+	var cube1 = new Cube(.5,.5,0, .1);
+	var cube2 = new Cube(-.5,.5,0, .1);
+	var cube3 = new Cube(-.5,-.5,0, .1);
+	var cube4 = new Cube(.5,-.5,0, .1);
+	
+	var pyramid = new Pyramid(0,0,0,.1);
+	var pyramid1 = new Pyramid(0,0.5,0,.1);
+	var pyramid2 = new Pyramid(0,-0.5,0,.1);
+	var pyramid3 = new Pyramid(-0.5,0,0,.1);
+	var pyramid4 = new Pyramid(0.5,0,0,.1);
+	
+	
+			// rotate pyramids so they appear boring
+			var a,b,c;
+	
+			a = pyramid.points[0].x;
+			b = pyramid.points[0].y;
+			c = pyramid.points[0].z;
+			
+			pyramid.translate(-a,-b,-c);
+			
+			pyramid.rotateX(Math.PI/2);
+			
+			pyramid.translate(a,b,c);
+			
+			a = pyramid1.points[0].x;
+			b = pyramid1.points[0].y;
+			c = pyramid1.points[0].z;
+			
+			pyramid1.translate(-a,-b,-c);
+			
+			pyramid1.rotateX(Math.PI/2);
+			
+			pyramid1.translate(a,b,c);
+			
+			a = pyramid2.points[0].x;
+			b = pyramid2.points[0].y;
+			c = pyramid2.points[0].z;
+			
+			pyramid2.translate(-a,-b,-c);
+			
+			pyramid2.rotateX(Math.PI/2);
+			
+			pyramid2.translate(a,b,c);
+			
+			a = pyramid3.points[0].x;
+			b = pyramid3.points[0].y;
+			c = pyramid3.points[0].z;
+			
+			pyramid3.translate(-a,-b,-c);
+			
+			pyramid3.rotateX(Math.PI/2);
+			
+			pyramid3.translate(a,b,c);
+			
+			a = pyramid4.points[0].x;
+			b = pyramid4.points[0].y;
+			c = pyramid4.points[0].z;
+			
+			pyramid4.translate(-a,-b,-c);
+			
+			pyramid4.rotateX(Math.PI/2);
+			
+			pyramid4.translate(a,b,c);
+	
+	
+	
+	
    canvas = initCanvas('canvas1');
    canvas.update = function(g) {
+      
+      g.fillStyle = 'rgb(135,206,250)';
+      g.fillRect(0, 0, canvas.width, canvas.height);
+
 
       // YOU ARE GOING TO REPLACE THE CODE BELOW.
+		var x = this.cursor.x,
+          	y = this.cursor.y;
+        //cursorVec.x = x;
+        //cursorVec.y = y;
+        //cursorVec.viewportTransform(canvas.width, canvas.height, cursorPos);
+        //var x 
 
-      var x = this.cursor.x,
-          y = this.cursor.y;
-
+		
+			
+		a = pyramid.points[0].x;
+		b = pyramid.points[0].y;
+		c = pyramid.points[0].z;
+			//pyramid.translate(0,0,0);
+			
+			//pyramid.scale(scales);
+			
+			
+		//if (this.cursor.z == 1){
+			//cube.scale(1.001);
+		//}
+		//cube.updatePos(x,y, 0);
+		//cube.drawPoints(g);
+		//cube.updatePos(100,100,0);
+		
+		
+		// If we press the cursor rotate all objects in place by moving to origin and applying rotation
+		if (this.cursor.z == 1){
+		
+			// Move all objects in circular path
+                //pyramid.translate(.005*Math.cos(time),.005*Math.sin(time),0);
+                        pyramid1.translate(.005*Math.cos(time),.005*Math.sin(time),0);
+                        pyramid2.translate(.005*Math.cos(time),.005*Math.sin(time),0);
+                        pyramid3.translate(.005*Math.cos(time),.005*Math.sin(time),0);
+                        pyramid4.translate(.005*Math.cos(time),.005*Math.sin(time),0);
+                        
+                        cube.translate(.005*Math.cos(time),.005*Math.sin(time),0);
+                        cube1.translate(.005*Math.cos(time),.005*Math.sin(time),0);
+                        cube2.translate(.005*Math.cos(time),.005*Math.sin(time),0);
+                        cube3.translate(.005*Math.cos(time),.005*Math.sin(time),0);
+                        cube4.translate(.005*Math.cos(time),.005*Math.sin(time),0);
+	
+			a = pyramid.points[0].x;
+			b = pyramid.points[0].y;
+			c = pyramid.points[0].z;
+			
+			pyramid.translate(-a,-b,-c);
+			
+			pyramid.rotateX(-.02);
+			pyramid.rotateY(-.02);
+			pyramid.rotateZ(-.02);
+			
+			pyramid.translate(a,b,c);
+			
+			a = pyramid1.points[0].x;
+			b = pyramid1.points[0].y;
+			c = pyramid1.points[0].z;
+			
+			pyramid1.translate(-a,-b,-c);
+			
+			pyramid1.rotateX(-.02);
+			pyramid1.rotateY(-.02);
+			pyramid1.rotateZ(-.02);
+			
+			pyramid1.translate(a,b,c);
+			
+			a = pyramid2.points[0].x;
+			b = pyramid2.points[0].y;
+			c = pyramid2.points[0].z;
+			
+			pyramid2.translate(-a,-b,-c);
+			
+			pyramid2.rotateX(-.02);
+			pyramid2.rotateY(-.02);
+			pyramid2.rotateZ(-.02);
+			
+			pyramid2.translate(a,b,c);
+			
+			a = pyramid3.points[0].x;
+			b = pyramid3.points[0].y;
+			c = pyramid3.points[0].z;
+			
+			pyramid3.translate(-a,-b,-c);
+			
+			pyramid3.rotateX(-.02);
+			pyramid3.rotateY(-.02);
+			pyramid3.rotateZ(-.02);
+			
+			pyramid3.translate(a,b,c);
+			
+			a = pyramid4.points[0].x;
+			b = pyramid4.points[0].y;
+			c = pyramid4.points[0].z;
+			
+			pyramid4.translate(-a,-b,-c);
+			
+			pyramid4.rotateX(-.02);
+			pyramid4.rotateY(-.02);
+			pyramid4.rotateZ(-.02);
+			
+			pyramid4.translate(a,b,c);
+			
+			/////////////////
+			
+			a = cube.points[0].x;
+			b = cube.points[0].y;
+			c = cube.points[0].z;
+			
+			cube.translate(-a,-b,-c);
+			
+			cube.rotateX(.02);
+			cube.rotateY(.02);
+			cube.rotateZ(.02);
+			
+			cube.translate(a,b,c);
+			
+			a = cube1.points[0].x;
+			b = cube1.points[0].y;
+			c = cube1.points[0].z;
+			
+			cube1.translate(-a,-b,-c);
+			
+			cube1.rotateX(.02);
+			cube1.rotateY(.02);
+			cube1.rotateZ(.02);
+			
+			cube1.translate(a,b,c);
+			
+			a = cube2.points[0].x;
+			b = cube2.points[0].y;
+			c = cube2.points[0].z;
+			
+			cube2.translate(-a,-b,-c);
+			
+			cube2.rotateX(.02);
+			cube2.rotateY(.02);
+			cube2.rotateZ(.02);
+			
+			cube2.translate(a,b,c);
+			
+			a = cube3.points[0].x;
+			b = cube3.points[0].y;
+			c = cube3.points[0].z;
+			
+			cube3.translate(-a,-b,-c);
+			
+			cube3.rotateX(.02);
+			cube3.rotateY(.02);
+			cube3.rotateZ(.02);
+			
+			cube3.translate(a,b,c);
+			
+			a = cube4.points[0].x;
+			b = cube4.points[0].y;
+			c = cube4.points[0].z;
+			
+			cube4.translate(-a,-b,-c);
+			
+			cube4.rotateX(.02);
+			cube4.rotateY(.02);
+			cube4.rotateZ(.02);
+			
+			cube4.translate(a,b,c);
+			
+			
+			
+		}
+		
+	
+			
+		
+		// Viewport and display all objects
+		g.strokeStyle = 'rgb(20,40,100)';
+		g.fillStyle = 'rgb(20,40,100)';
+		//pyramid.viewport(this);
+		//pyramid.drawLines(g);
+		
+		pyramid1.viewport(this);
+		pyramid1.drawLines(g);
+		
+		pyramid2.viewport(this);
+		pyramid2.drawLines(g);
+		
+		pyramid3.viewport(this);
+		pyramid3.drawLines(g);
+		
+		pyramid4.viewport(this);
+		pyramid4.drawLines(g);
+		
+		
+		cube.viewport(this);
+		cube.drawLines(g);
+		
+		cube1.viewport(this);
+		cube1.drawLines(g);
+		
+		cube2.viewport(this);
+		cube2.drawLines(g);
+		
+		cube3.viewport(this);
+		cube3.drawLines(g);
+		
+		cube4.viewport(this);
+		cube4.drawLines(g);
+		
+		//cube.translate(x,y,c);
+		//cube.drawPoints(g);
+		g.strokeStyle = 'black';
+		g.fillStyle = 'rgb(0,0,0)';
+		cube.viewport(this);
+		
+      
+          
+      
+		// Create border
       g.strokeStyle = 'black';
       g.strokeRect(1, 1, this.width-2, this.height-2);
 
-      var diameter = 100 * (1 + .1 * Math.sin(time * 10));
-      g.fillStyle = this.cursor.z ? 'red' : 'rgb(0,0,128)';
-      g.fillRect(x - diameter / 2, y - diameter / 2, diameter, diameter);
+      //var diameter = 100 * (1 + .1 * Math.sin(time * 10));
+      //g.fillStyle = this.cursor.z ? 'red' : 'rgb(0,0,128)';
+      //g.fillRect(x - diameter / 2, y - diameter / 2, diameter, diameter);
    }
 </script>
 
