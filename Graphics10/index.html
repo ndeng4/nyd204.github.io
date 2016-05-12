@@ -1,0 +1,59 @@
+<script src=CT_Modeler.js></script>
+
+<body bgcolor=white>
+<center>
+<canvas id='canvas1' width='480' height='480'></canvas>
+</center>
+</body>
+
+<script>
+function getTime() { return (new Date()).getTime() / 1000; }
+
+      var scene = new CT.Scene(canvas1);
+      scene.setLight(0, [ 1, 1, 1]);
+      scene.setLight(1, [-1,-1,-1], [.1, .05, 0]);
+
+      var root = new CT.Node();
+      scene.add(root);
+
+      var head = root.addChild(new CT.Sphere(30,10));
+      var fbody = root.addChild(new CT.Sphere(20,10));
+      var tjoint = fbody.addChild(new CT.Node());
+      var tail = tjoint.addChild(new CT.Sphere(20,10));
+      var frjoint = fbody.addChild(new CT.Node());
+      var fljoint = fbody.addChild(new CT.Node());
+      var frleg = frjoint.addChild(new CT.Cylinder(20));
+      var flleg = fljoint.addChild(new CT.Cylinder(20));
+	  var frjoint2 = frleg.addChild(new CT.Node());
+	  var frleg2 = frjoint2.addChild(new CT.Cylinder(20));
+      var brjoint = tjoint.addChild(new CT.Node());
+      var bljoint = tjoint.addChild(new CT.Node());
+      var brleg = brjoint.addChild(new CT.Cylinder(20));
+      var blleg = bljoint.addChild(new CT.Cylinder(20));
+
+      tjoint.translate(-1,.2,.2);
+
+      var startTime = getTime();
+      (function update() {
+        CT.time = getTime() - startTime;
+
+        //head.setPhong([.1,0,0, .5,0,.5+.5*Math.sin(10*CT.time), .5,.5,5,10]);
+
+        root.identity().translate(-.25,.25,0);
+        head.identity().scale([.17,.17,.17]).translate([0,.2,-4.2]);
+        fbody.identity().scale([.35,.2,.2]).translate([.5,-.8,-4.3]).rotateY(15);
+        tail.identity().scale([.35,.2,.2]).rotateY(210).translate([2,1,-.1]);
+        frjoint.identity().rotateX(0.1 * Math.sin(CT.time * 5));
+        fljoint.identity().rotateX(0.1 * Math.sin(CT.time * 5 + 1));
+        frleg.identity().rotateX(30).translate([-.2,.55,-1.2]).scale([.2,.2,.7]);
+        flleg.identity().rotateX(30).translate([.25,.55,-1.2]).scale([.2,.2,.7]);
+        brjoint.identity().rotateX(0.1 * Math.sin(CT.time * 5));
+        bljoint.identity().rotateX(0.1 * Math.sin(CT.time * 5 + 1));
+        brleg.identity().rotateX(20).scale([.2,.2,.8]).translate([3.5,-1.2,1.5]);
+        blleg.identity().rotateX(20).scale([.2,.2,.8]).translate([6,-1.2,1.5]);
+        root.draw();
+
+        setTimeout(update, 1000 / 60);
+      })();
+</script>
+
