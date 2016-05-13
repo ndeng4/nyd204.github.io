@@ -1,59 +1,254 @@
-<script src=CT_Modeler.js></script>
 
 <body bgcolor=white>
 <center>
-<canvas id='canvas1' width='480' height='480'></canvas>
+<canvas id='canvas1' width='800' height='600'></canvas>
+<h1>Meet Bender!</h1>
+<ul>Click and drag to rotate him!</ul>
+<ul>Press W to make him walk!</ul>
+<ul>Press H to have him introduce himself!</ul>
 </center>
 </body>
-
+<script src=CT_Modeler.js></script>
 <script>
+
 function getTime() { return (new Date()).getTime() / 1000; }
 
-      var scene = new CT.Scene(canvas1);
-      scene.setLight(0, [ 1, 1, 1]);
-      scene.setLight(1, [-1,-1,-1], [.1, .05, 0]);
+var scene = new CT.Scene(canvas1);
+scene.setLight(0, [ 1, 1, 1]);
+scene.setLight(1, [-1,-1,-1], [.1, .05, 0]);
 
-      var root = new CT.Node();
-      scene.add(root);
+var root = new CT.Node();
+scene.add(root);
 
-      var head = root.addChild(new CT.Sphere(30,10));
-      var fbody = root.addChild(new CT.Sphere(20,10));
-      var tjoint = fbody.addChild(new CT.Node());
-      var tail = tjoint.addChild(new CT.Sphere(20,10));
-      var frjoint = fbody.addChild(new CT.Node());
-      var fljoint = fbody.addChild(new CT.Node());
-      var frleg = frjoint.addChild(new CT.Cylinder(20));
-      var flleg = fljoint.addChild(new CT.Cylinder(20));
-	  var frjoint2 = frleg.addChild(new CT.Node());
-	  var frleg2 = frjoint2.addChild(new CT.Cylinder(20));
-      var brjoint = tjoint.addChild(new CT.Node());
-      var bljoint = tjoint.addChild(new CT.Node());
-      var brleg = brjoint.addChild(new CT.Cylinder(20));
-      var blleg = bljoint.addChild(new CT.Cylinder(20));
+// START DRAGGING
+var isDragging = false;
+var startPosition = [0,0];
+var rootScale = .1;
+var rootRotateStart = [0,0,0];
+var rootRotateCurrent = [0,0,0];
 
-      tjoint.translate(-1,.2,.2);
+canvas1.onmousedown = function(e) {
+	isDragging = true;
+	startPosition = [e.screenX,e.screenY];
+}
 
-      var startTime = getTime();
-      (function update() {
-        CT.time = getTime() - startTime;
+window.onmousemove = function(e) {
+	if (isDragging) {
+		var xDist = e.screenX - startPosition[0];
+		var yDist = e.screenY - startPosition[1];
+		rootRotateCurrent[0] = rootRotateStart[0] + xDist/100;
+		rootRotateCurrent[1] = rootRotateStart[1] + yDist/100;
+	}
+}
 
-        //head.setPhong([.1,0,0, .5,0,.5+.5*Math.sin(10*CT.time), .5,.5,5,10]);
+window.onmouseup = function() {
+	isDragging = false;
+	rootRotateStart[0] = rootRotateCurrent[0] % (2*Math.PI);
+	rootRotateStart[1] = rootRotateCurrent[1] % (2*Math.PI);
+}
+// END DRAGGING
 
-        root.identity().translate(-.25,.25,0);
-        head.identity().scale([.17,.17,.17]).translate([0,.2,-4.2]);
-        fbody.identity().scale([.35,.2,.2]).translate([.5,-.8,-4.3]).rotateY(15);
-        tail.identity().scale([.35,.2,.2]).rotateY(210).translate([2,1,-.1]);
-        frjoint.identity().rotateX(0.1 * Math.sin(CT.time * 5));
-        fljoint.identity().rotateX(0.1 * Math.sin(CT.time * 5 + 1));
-        frleg.identity().rotateX(30).translate([-.2,.55,-1.2]).scale([.2,.2,.7]);
-        flleg.identity().rotateX(30).translate([.25,.55,-1.2]).scale([.2,.2,.7]);
-        brjoint.identity().rotateX(0.1 * Math.sin(CT.time * 5));
-        bljoint.identity().rotateX(0.1 * Math.sin(CT.time * 5 + 1));
-        brleg.identity().rotateX(20).scale([.2,.2,.8]).translate([3.5,-1.2,1.5]);
-        blleg.identity().rotateX(20).scale([.2,.2,.8]).translate([6,-1.2,1.5]);
-        root.draw();
+var wKey = false;
+window.onkeyup = function(e) {
+	if (e.keyCode == 119 || e.keyCode == 87) {
+		wKey = !wKey;
+	}
+	if (e.keyCode == 104 || e.keyCode == 72) {
+		var audio = new Audio('imbender.mp3');
+		audio.play();
+	}
+}
 
-        setTimeout(update, 1000 / 60);
-      })();
+function addMaterial() {
+	for(var i=0; i<arguments.length; i++) {
+		arguments[i].setPhong([.1,.2,.3, .4,.5,.6, .4,.4,.4,10]);
+	}
+}
+
+function addDarkerMaterial() {
+	for(var i=0; i<arguments.length; i++) {
+		arguments[i].setPhong([0,.1,.2, .3,.4,.5, .3,.3,.3,10]);
+	}
+}
+
+
+var showBody = true;
+var showHead = true;
+
+var startTime = getTime();
+var bodyNode = root.addChild(new CT.Node());
+
+if (showBody) {
+	var body = bodyNode.addChild(new CT.Cylinder());
+}
+var headNode = bodyNode.addChild(new CT.Node());
+if (showHead) {
+	var head = headNode.addChild(new CT.Cylinder());
+	var dome = headNode.addChild(new CT.Sphere());
+}
+var visor = headNode.addChild(new CT.OpenCylinder(16));
+var visorInside = headNode.addChild(new CT.Cylinder());
+var leftEye = headNode.addChild(new CT.Sphere());
+var rightEye = headNode.addChild(new CT.Sphere());
+var antennae = headNode.addChild(new CT.Cylinder());
+var antennaeTip = headNode.addChild(new CT.Sphere());
+var antennaeBase = headNode.addChild(new CT.Torus(40,10,.7));
+var leftShoulder = bodyNode.addChild(new CT.Torus(40,10,.7));
+var rightShoulder = bodyNode.addChild(new CT.Torus(40,10,.7));
+var leftArm = bodyNode.addChild(new CT.Node());
+var rightArm = bodyNode.addChild(new CT.Node());
+var leftLeg = bodyNode.addChild(new CT.Node());
+var rightLeg = bodyNode.addChild(new CT.Node());
+
+var leftPupil = headNode.addChild(new CT.Cube());
+var rightPupil = headNode.addChild(new CT.Cube());
+
+
+
+rightEye.setPhong([.8,.8,.5, .8,.8,.5, .8,.8,.5,10]);
+leftEye.setPhong([.8,.8,.5, .8,.8,.5, .8,.8,.5,10]);
+addMaterial(body, head, dome, visor, antennae, antennaeTip, antennaeBase, leftShoulder, rightShoulder);
+
+
+var rotation = Math.PI/10;
+function buildAppendageSegments(parent) {
+	var segmentSize = 1;
+	
+	var appendageNodes = [];
+	var segments = [];
+	
+	var joint = parent.addChild(new CT.Node());
+	var appendageNode = joint.addChild(new CT.Node());
+	appendageNode.rotateX(rotation);
+	appendageNodes.push(appendageNode);
+	for (var i=0; i<6; i++) {
+		var segment = appendageNode.addChild(new CT.Cylinder());
+		addDarkerMaterial(segment);
+		segment.translate([0,0,2]);
+		segments.push(segment);
+		
+		appendageNode = appendageNode.addChild(new CT.Node());
+		appendageNode.rotateX(rotation).translate([0,1,1.8]);
+		appendageNodes.push(appendageNode);
+	}
+	return {
+		animate: function(f) {
+			for (var i=0; i<6; i++) {
+				appendageNodes[i].identity();
+				segments[i].identity();
+				f(i, appendageNodes[i], segments[i]);
+			}
+		},
+		lastAppendageNode: appendageNodes[appendageNodes.length-1]
+	}
+}
+var leftArmObject = buildAppendageSegments(leftArm);
+leftArm.scale(.5)
+	.rotateY(Math.PI/2)
+	.rotateX(Math.PI/8)
+	.translate([0,5,1]);
+	
+var rightArmObject = buildAppendageSegments(rightArm);
+rightArm.scale(.5)
+	.rotateY(-Math.PI/2)
+	.rotateX(Math.PI/8)
+	.translate([0,5,1]);
+
+var leftLegObject = buildAppendageSegments(leftLeg);
+leftLeg.scale(.5)
+	.rotateX(Math.PI/8)
+	.translate([2,-5,-1]);
+var leftFoot = leftLegObject.lastAppendageNode.addChild(new CT.Sphere())
+	.scale([2,2,.5])
+	.translate([0,0,2]);
+	
+var rightLegObject = buildAppendageSegments(rightLeg);
+rightLeg.scale(.5)
+	.rotateX(Math.PI/8)
+	.translate([-2,-5,-1]);
+var rightFoot = rightLegObject.lastAppendageNode.addChild(new CT.Sphere())
+	.scale([2,2,.5])
+	.translate([0,0,2]);
+
+addMaterial(leftFoot, rightFoot);
+
+if (showBody) {
+	body.identity()
+		.rotateX(Math.PI/2).scale([2,2,3]);
+}
+headNode.identity().translate([0,4,0]);
+if (showHead) {
+	head.identity().rotateX(Math.PI/2);
+	dome.identity().rotateX(Math.PI/2).translate([0,0,-1]);
+}
+
+visor.identity().translate([0,.3,.6]).scale([.8,.35,1]);
+visorInside.identity().translate([0,.3,.3]).scale([.74,.29,.79]);
+visorInside.setPhong([.0,.0,.0, .0,.0,0, 0,0,0,10]);
+leftEye.identity().translate([.25,.3,1]).scale(.3);
+rightEye.identity().translate([-.25,.3,1]).scale(.3);
+
+leftPupil.translate([.25,.3,1.25]).scale(.07);
+leftPupil.setPhong([.0,.0,.0, .0,.0,0, 0,0,0,10]);
+rightPupil.translate([-.25,.3,1.25]).scale(.07);
+rightPupil.setPhong([.0,.0,.0, .0,.0,0, 0,0,0,10]);
+
+antennae.identity().rotateX(Math.PI/2).translate([0,0,-2]).scale([.08,.08,1]);
+antennaeTip.identity().translate([0,3,0]).scale(.15);
+antennaeBase.identity().translate([0,2,0]).scale(.15).rotateX(Math.PI/2);
+
+leftShoulder.identity().translate([-2,1.5,0]).scale(.5).rotateY(Math.PI/2);
+rightShoulder.identity().translate([2,1.5,0]).scale(.5).rotateY(Math.PI/2);
+
+(function update() {
+	CT.time = getTime() - startTime;
+	root.identity()
+		.scale(rootScale)
+		.rotateY(rootRotateCurrent[0])
+		.rotateX(rootRotateCurrent[1]);
+
+	
+	if (wKey) {
+		leftLegObject.animate(function(i,an,s) {
+			an.rotateX(rotation + Math.sin(CT.time*6)/6);
+			if (i>0) {
+				an.translate([0,1,1.8]);
+			}
+			s.translate([0,0,2]);
+		});
+		
+		rightLegObject.animate(function(i,an,s) {
+			an.rotateX(rotation + Math.sin(CT.time*6 + Math.PI)/6 );
+			if (i>0) {
+				an.translate([0,1,1.8]);
+			}
+			s.translate([0,0,2]);
+		});
+		
+		leftArmObject.animate(function(i,an,s) {
+			an.rotateX(rotation);
+			an.rotateY(Math.sin(CT.time*6 + Math.PI*2)/20);
+			if (i>0) {
+				an.translate([0,1,1.8]);
+			}
+			s.translate([0,0,2]);
+		});
+		
+		rightArmObject.animate(function(i,an,s) {
+			an.rotateX(rotation);
+			an.rotateY(Math.sin(CT.time*6)/20);
+			if (i>0) {
+				an.translate([0,1,1.8]);
+			}
+			s.translate([0,0,2]);
+		});
+	}
+	
+	
+
+	root.draw();
+
+	setTimeout(update, 1000 / 60);
+})();
 </script>
 
